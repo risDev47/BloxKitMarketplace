@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ตะกร้าสินค้า - BloxKitMarketplace</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 0 10px;
+      background-color: #121212;
+      color: #eee;
+    }
+    h1 {
+      text-align: center;
+      color: #ff4c4c;
+    }
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    li {
+      padding: 10px;
+      border-bottom: 1px solid #333;
+    }
+    .total {
+      font-weight: bold;
+      font-size: 1.2rem;
+      margin-top: 15px;
+      text-align: right;
+      color: #ff4c4c;
+    }
+    button, a.button-link {
+      background-color: #ff4c4c;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      font-size: 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 20px;
+      display: block;
+      width: 100%;
+      text-align: center;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+    button:hover, a.button-link:hover {
+      background-color: #cc3a3a;
+    }
+    .empty-cart {
+      text-align: center;
+      color: #888;
+      margin-top: 40px;
+    }
+    /* ส่วนของรายละเอียดวิธีสั่งซื้อ */
+    section.order-info {
+      margin-top: 30px;
+      line-height: 1.6;
+      color: #ccc;
+      border-top: 1px solid #333;
+      padding-top: 20px;
+    }
+    section.order-info h2 {
+      color: #ff4c4c;
+      margin-bottom: 10px;
+    }
+    section.order-info ol {
+      padding-left: 20px;
+    }
+    section.order-info ol li {
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>ตะกร้าสินค้า</h1>
+
+<ul id="cart-list"></ul>
+<p class="total" id="cart-total"></p>
+
+<a id="fb-order-btn" href="#" class="button-link">สั่งซื้อผ่าน Facebook</a>
+
+<section class="order-info">
+  <h2>📌 วิธีการสั่งซื้อ</h2>
+  <ol>
+    <li>เลือกสินค้าที่ต้องการและเพิ่มลงในตะกร้า</li>
+    <li>ตรวจสอบรายการสินค้าในตะกร้าให้เรียบร้อย</li>
+    <li>คลิกปุ่ม <strong>“สั่งซื้อผ่าน Facebook”</strong></li>
+    <li>ระบบจะคัดลอกรายการสั่งซื้ออัตโนมัติและพาคุณไปยังหน้า Facebook ของเรา</li>
+    <li>วางข้อความที่คัดลอกไว้ในแชทแล้วกดส่งเพื่อยืนยันการสั่งซื้อกับแอดมิน</li>
+  </ol>
+  <p>📦 หลังจากแอดมินได้รับคำสั่งซื้อจะแจ้งรายละเอียดการชำระเงินและจัดส่งให้ทราบทางข้อความอีกครั้งครับ</p>
+
+  <h2>📜 ข้อตกลงและเงื่อนไข</h2>
+  <ul style="color: #bbb; padding-left: 20px; line-height: 1.5;">
+    <li>• สิทธิ์การใช้งานสินค้านี้เป็นของผู้ซื้อสำหรับการใช้งานส่วนตัวหรือเชิงพาณิชย์ในโปรเจกต์ของตนเอง</li>
+    <li>• ผู้ซื้อสามารถแก้ไข ปรับแต่ง หรือดัดแปลงสินค้าได้ตามต้องการ</li>
+    <li>• ห้ามนำสินค้าไปจำหน่าย แจกจ่าย หรือโอนสิทธิ์ต่อโดยไม่ได้รับอนุญาต</li>
+    <li>• สามารถนำสินค้าไปใช้ในโปรเจกต์เชิงพาณิชย์ เช่น เกม หรือแอปพลิเคชันที่สร้างรายได้</li>
+    <li>• ผู้ซื้อเป็นผู้รับผิดชอบในการใช้งานสินค้าและการปฏิบัติตามกฎหมายที่เกี่ยวข้องทั้งหมด</li>
+  </ul>
+</section>
+
+<script>
+  const cartList = document.getElementById('cart-list');
+  const cartTotal = document.getElementById('cart-total');
+  const fbOrderBtn = document.getElementById('fb-order-btn');
+
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+  function renderCart() {
+    cartList.innerHTML = '';
+    if (cart.length === 0) {
+      cartList.innerHTML = '<p class="empty-cart">ไม่มีสินค้าในตะกร้า</p>';
+      cartTotal.textContent = '';
+      fbOrderBtn.style.display = 'none';
+      return;
+    }
+    fbOrderBtn.style.display = 'block';
+
+    let totalPrice = 0;
+    cart.forEach(item => {
+      const li = document.createElement('li');
+      li.textContent = `${item.name} x${item.qty} - ฿${item.price * item.qty}`;
+      cartList.appendChild(li);
+      totalPrice += item.price * item.qty;
+    });
+
+    cartTotal.textContent = `รวมทั้งหมด: ฿${totalPrice}`;
+  }
+
+  fbOrderBtn.addEventListener('click', async (e) => {
+    e.preventDefault();
+
+    if (cart.length === 0) {
+      alert('ไม่มีสินค้าในตะกร้า');
+      return;
+    }
+
+    let message = 'สวัสดีครับ ผมต้องการสั่งซื้อสินค้าดังนี้:\n';
+    let total = 0;
+    cart.forEach(item => {
+      message += `- ${item.name} x${item.qty} = ฿${item.price * item.qty}\n`;
+      total += item.price * item.qty;
+    });
+    message += `รวมทั้งหมด: ฿${total}`;
+
+    try {
+      await navigator.clipboard.writeText(message);
+      alert("คัดลอกรายการเรียบร้อยแล้ว! ระบบจะพาไปหน้า Facebook ให้คุณวางข้อความแล้วกดส่งครับ");
+    } catch (err) {
+      alert("ไม่สามารถคัดลอกข้อความอัตโนมัติได้ กรุณาคัดลอกด้วยตนเอง:\n\n" + message);
+    }
+
+    window.open('https://www.facebook.com/Riskee.Whedoloh', '_blank');
+
+    localStorage.removeItem('cart');
+    cart = [];
+    renderCart();
+  });
+
+  renderCart();
+</script>
+
+</body>
+</html>

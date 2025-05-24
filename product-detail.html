@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>รายละเอียดสินค้า - BloxKitMarketplace</title>
+  <style>
+    /* ใส่ CSS ตามที่คุณมีอยู่เดิม */
+    body {
+      background-color: #121212;
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 2rem;
+      max-width: 700px;
+      margin: auto;
+    }
+    h2 {
+      color: #e53935;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    .product-detail {
+      background-color: #1e1e1e;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.7);
+      text-align: center;
+    }
+    .product-detail img {
+      max-width: 100%;
+      border-radius: 8px;
+      filter: brightness(0.9);
+      margin-bottom: 1rem;
+    }
+    /* แก้ให้ข้อความรายละเอียดชิดซ้าย และขึ้นบรรทัดใหม่ตาม <br> */
+    .product-detail p {
+      text-align: left;
+      white-space: normal; /* ให้ <br> ทำงาน */
+      line-height: 1.5;
+      font-size: 1rem;
+      color: #ddd;
+      margin-bottom: 1rem;
+    }
+    .price {
+      color: #ff5252;
+      font-weight: bold;
+      font-size: 1.5rem;
+      margin: 1rem 0;
+    }
+    .btn-buy {
+      background-color: #e53935;
+      color: white;
+      border: none;
+      padding: 0.9rem 2rem;
+      font-size: 1.2rem;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .btn-buy:hover {
+      background-color: #b71c1c;
+    }
+  </style>
+</head>
+<body>
+  <h2>รายละเอียดสินค้า</h2>
+  <div class="product-detail" id="product-detail">
+    <!-- รายละเอียดสินค้าจะถูกแสดงที่นี่ -->
+  </div>
+
+  <script>
+    // ข้อมูลสินค้า จำลองแบบเดียวกับหน้าแรก
+  const products = [
+  {
+    id: 'สินค้า1',
+    name: 'Casino & Slot System',
+    price: 350,
+    description: `
+    <ul style="padding-left: 1.2em; margin: 0; text-align:left; color:#ddd;">
+      <li><strong>แจ็คพ็อต (Jackpot)</strong><br>
+          ถ้าตัวเลข 5 ตัวออกมาเหมือนกันเป็น "77777" ทุกตำแหน่ง<br>
+          → รางวัลคือ เดิมพัน × 10 เท่า
+      </li>
+      <li><strong>รางวัลอื่น ๆ ขึ้นกับจำนวนเลขที่เหมือนกัน</strong><br>
+          ถ้ามีเลขตัวใด ออกครบ 5 ตัว (เลขทั้งหมดเหมือนกัน)<br>
+          → รางวัลคือ เดิมพัน × 5 เท่า<br><br>
+
+          ถ้ามีเลขตัวใด ออกมากกว่า 2 ตัว (3 ตัวขึ้นไป)<br>
+          → รางวัลคือ เดิมพัน × 3 เท่า<br><br>
+
+          ถ้ามีเลขตัวใด ออก 2 ตัว (เลขคู่)<br>
+          → รางวัลคือ เดิมพัน × 2 เท่า
+      </li>
+      <li><strong>ถ้าไม่เข้าเงื่อนไขข้างต้น</strong><br>
+          จะไม่มีรางวัล (แจ้งว่า "Try again!")
+      </li>
+      <li><strong>ตัวอย่าง</strong><br><br>
+
+          เดิมพัน 10 บาท<br><br>
+
+          ผลออกมาเป็นเลข [7,7,7,7,7] → Jackpot → ได้เงิน 10 × 10 = 100 บาท<br>
+          ผลออกมาเป็นเลข [4,4,4,4,4] → 5 ตัวเหมือน → ได้เงิน 10 × 5 = 50 บาท<br>
+          ผลออกมาเป็นเลข [2,2,2,3,4] → มีเลข 2 ออก 3 ตัว → ได้เงิน 10 × 3 = 30 บาท<br>
+          ผลออกมาเป็นเลข [1,1,5,6,7] → มีเลข 1 ออก 2 ตัว → ได้เงิน 10 × 2 = 20 บาท<br>
+          ผลออกมาเป็นเลข [1,2,3,4,5] → ไม่มีเลขซ้ำ → ไม่มีรางวัล
+      </li>
+    </ul>
+    `,
+    img: 'https://i.postimg.cc/jqBChbbx/Casino.png'
+      },
+      {
+        id: 'สินค้า2',
+        name: 'สินค้า 2',
+        price: 450,
+        description: 'รายละเอียดสินค้า 2 แบบละเอียด',
+        img: 'https://via.placeholder.com/400x250?text=สินค้า2'
+      },
+      {
+        id: 'สินค้า3',
+        name: 'สินค้า 3',
+        price: 299,
+        description: 'รายละเอียดสินค้า 3 แบบละเอียด',
+        img: 'https://via.placeholder.com/400x250?text=สินค้า3'
+      },
+    ];
+
+    // ฟังก์ชันอ่านพารามิเตอร์ URL
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    // ฟังก์ชันแสดงข้อมูลสินค้า
+    function showProductDetail() {
+      const id = getQueryParam('id');
+      const product = products.find(p => p.id === id);
+
+      const container = document.getElementById('product-detail');
+
+      if (!product) {
+        container.innerHTML = '<p>ไม่พบข้อมูลสินค้านี้</p>';
+        return;
+      }
+
+      container.innerHTML = `
+        <img src="${product.img}" alt="${product.name}">
+        <h3>${product.name}</h3>
+        <p>${product.description}</p>
+        <div class="price">฿${product.price}</div>
+        <button class="btn-buy" onclick="addToCart('${product.name}', ${product.price})">เพิ่มลงตะกร้า</button>
+      `;
+    }
+
+    // ฟังก์ชันเพิ่มสินค้าไปตะกร้า (ใช้ localStorage เหมือนหน้าแรก)
+    function addToCart(name, price) {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const index = cart.findIndex(item => item.name === name);
+      if (index !== -1) {
+        cart[index].qty += 1;
+      } else {
+        cart.push({ name, price, qty: 1 });
+      }
+      localStorage.setItem('cart', JSON.stringify(cart));
+      alert(`เพิ่ม "${name}" ลงในตะกร้าแล้ว!`);
+    }
+
+    // เรียกฟังก์ชันเมื่อโหลดหน้า
+    showProductDetail();
+  </script>
+</body>
+</html>
